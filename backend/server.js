@@ -4,9 +4,11 @@ import { connectDB } from "./config/db.js";
 import Product from "./models/product.model.js";
 
 dotenv.config();
-const app = express();
 
-app.post("/products", async (req, res) => {
+const app = express();
+app.use(express.json()); //allows us to accept JSON data in the req.body
+
+app.post("/api/products", async (req, res) => {
   const product = req.body; // user will send this data
 
   if (!product.name || !product.price || !product.image) {
