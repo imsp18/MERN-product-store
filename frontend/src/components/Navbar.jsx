@@ -1,5 +1,6 @@
 import { Button, Container, Flex, HStack, Link, Text, useColorMode } from "@chakra-ui/react"
 import { BsPlusSquare } from "react-icons/bs"
+import { IoMoon, IoSunny } from "react-icons/io5";
 
 const Navbar = () => {
     const { colorMode, toggleColorMode } = useColorMode();
@@ -33,7 +34,7 @@ const Navbar = () => {
                         </Button>
                     </Link>
                     <Button onClick={toggleColorMode}>
-                        {colorMode === 'light' ? '🌙' : '☀️'}
+                        {colorMode === 'light' ? <IoMoon /> : <IoSunny />}
                     </Button>
                 </HStack>
             </Flex>
