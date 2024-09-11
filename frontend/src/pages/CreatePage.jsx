@@ -1,5 +1,6 @@
 import { Box, Button, Container, Heading, Input, useColorModeValue, VStack } from "@chakra-ui/react"
 import { useState } from "react"
+import { useProductStore } from "../store/product";
 
 const CreatePage = () => {
     const [newProduct, setNewProduct] = useState({
@@ -8,8 +9,12 @@ const CreatePage = () => {
         image: "",
     });
 
-    const handleProduct = () => {
-        console.log(newProduct);
+    const { createProdcut } = useProductStore()
+
+    const handleProduct = async () => {
+        const { success, message } = await createProdcut(newProduct);
+        console.log("Success:", success)
+        console.log("Message:", message)
 
     }
     return (
@@ -46,7 +51,7 @@ const CreatePage = () => {
                         />
                         <Button colorScheme="blue" onClick={handleProduct} w={"w-full"} >Add a product</Button>
                     </VStack>
-                    
+
                 </Box>
             </VStack>
         </Container>
