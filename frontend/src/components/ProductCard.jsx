@@ -1,4 +1,4 @@
-import { Box, Heading, HStack, IconButton, Image, Text, useColorModeValue, useToast } from "@chakra-ui/react"
+import { Box, Button, Heading, HStack, IconButton, Image, Input, Modal, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, useColorModeValue, useDisclosure, useToast, VStack } from "@chakra-ui/react"
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import { useProductStore } from "../store/product";
 const ProductCard = ({
@@ -8,7 +8,8 @@ const ProductCard = ({
     const bg = useColorModeValue("white", "gray.800");
 
     const { deleteProducts } = useProductStore();
-    const toast = useToast()
+    const toast = useToast();
+    const { isOpen, onOpen, onClose } = useDisclosure();
 
     const handleDeleteProduct = async (pid) => {
         const { success, message } = await deleteProducts(pid);
@@ -48,7 +49,7 @@ const ProductCard = ({
                 </Text>
 
                 <HStack spacing={2}>
-                    <IconButton icon={<EditIcon />} colorScheme='blue' />
+                    <IconButton icon={<EditIcon />} onClick={onOpen} colorScheme='blue' />
                     <IconButton
                         icon={<DeleteIcon />}
                         colorScheme='red'
@@ -56,6 +57,29 @@ const ProductCard = ({
                     />
                 </HStack>
             </Box>
+            <Modal isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Update Product</ModalHeader>
+                    <ModalCloseButton />
+                    <VStack spacing={4}>
+                        <Input placeholder="Product Name"
+                            name="name"
+                        />
+                        <Input placeholder="Price"
+                            name="price"
+                            type="number"
+                        />
+                        <Input placeholder="Image URL"
+                            name="image"
+                        />
+                        <ModalFooter>
+                            <Button colorScheme="blue" mr={3} >Update</Button>
+                            <Button variant="ghost" onClick={onClose} >Cancel</Button>
+                        </ModalFooter>
+                    </VStack>
+                </ModalContent>
+            </Modal>
         </Box>
     )
 }
