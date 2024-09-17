@@ -6,27 +6,27 @@ export const getProduct = async (req, res) => {
     const products = await Product.find({});
     res.status(200).json({ success: true, data: products });
   } catch (error) {
-    console.log("error in fetching products:", error.message);
+    console.log("Error in fetching products:", error.message);
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
 
 export const createProduct = async (req, res) => {
-  const product = req.body; // user will send this data
+  const product = req.body;
 
   if (!product.name || !product.price || !product.image) {
     return res
       .status(400)
-      .json({ success: false, message: "Please Provide all fields" });
+      .json({ success: false, message: "Please provide all fields" });
   }
 
   const newProduct = new Product(product);
 
   try {
     await newProduct.save();
-    res.status(201).json({ sucess: true, data: newProduct });
+    res.status(201).json({ success: true, data: newProduct });
   } catch (error) {
-    console.log("Error in Create product:", error.message);
+    console.log("Error in creating product:", error.message);
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
@@ -37,33 +37,50 @@ export const deleteProduct = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res
       .status(404)
-      .json({ success: false, message: "Invalid Product Id" });
+      .json({ success: false, message: "Invalid Product ID" });
   }
 
   try {
-    await Product.findByIdAndDelete(id);
+    const product = await Product.findByIdAndDelete(id);
+
+    if (!product) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Product not found" });
+    }
+
     res.status(200).json({ success: true, message: "Product deleted" });
   } catch (error) {
-    console.log("Error in Deleting the Product", error.message);
+    console.log("Error in deleting the product:", error.message);
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
 
 export const updateProduct = async (req, res) => {
   const { id } = req.params;
-
   const product = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res
       .status(404)
-      .json({ success: false, message: "Invalid Product Id" });
+      .json({ success: false, message: "Invalid Product ID" });
   }
+
   try {
-    await Product.findByIdAndUpdate(id, product, { new: true });
-    res.status(200).json({ sucess: true, message: "Product Updated" });
+    const updatedProduct = await Product.findByIdAndUpdate(id, product, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updatedProduct) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Product not found" });
+    }
+
+    res.status(200).json({ success: true, data: updatedProduct, message: "Product updated" });
   } catch (error) {
-    console.log("Error in Updating the Product", error.message);
-    res.status(500).json({ sucess: false, message: "Server Error" });
+    console.log("Error in updating the product:", error.message);
+    res.status(500).json({ success: false, message: "Server Error" });
   }
 };
